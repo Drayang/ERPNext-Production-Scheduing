@@ -1,0 +1,18 @@
+include MANIFEST.in
+include requirements.txt
+include *.json
+include *.md
+include *.py
+include *.txt
+recursive-include production_scheduling_shrdc *.css
+recursive-include production_scheduling_shrdc *.csv
+recursive-include production_scheduling_shrdc *.html
+recursive-include production_scheduling_shrdc *.ico
+recursive-include production_scheduling_shrdc *.js
+recursive-include production_scheduling_shrdc *.json
+recursive-include production_scheduling_shrdc *.md
+recursive-include production_scheduling_shrdc *.png
+recursive-include production_scheduling_shrdc *.py
+recursive-include production_scheduling_shrdc *.svg
+recursive-include production_scheduling_shrdc *.txt
+recursive-exclude production_scheduling_shrdc *.pyc
