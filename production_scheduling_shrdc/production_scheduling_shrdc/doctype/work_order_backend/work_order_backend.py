@@ -20,7 +20,7 @@ class WorkOrderBackend(Document):
 	pass
 
 @frappe.whitelist()
-def work_order_scheduling(doc):
+def work_order_scheduling(doc,pp_isLinked):
 	pp_date = today()
 	abc = ''
 	# To access the current from field type. doc is in dict type, access using doc['fieldname']
