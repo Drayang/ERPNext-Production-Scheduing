@@ -234,10 +234,14 @@ def update_work_order(doc):
 def check_workstation_status(doc):
 	# To access the current from field type. doc is in dict type, access using doc['fieldname']
 	doc = json.loads(doc) #dict form
+	doc_dict = doc
 	doc = frappe.get_doc('Production Plan', doc['name']) #To get the current doc
 	po_items = doc.po_items #access the production plan item child doctype
 	bom_no = po_items[0].bom_no	 # assume all link to the same BOM
 	bom = frappe.get_doc('BOM', bom_no)
+
+	#Run this to save the checkbox value to the database so when we run frm.reload_doc() will not affect the state
+	doc.db_set('check_machine_status',doc_dict['check_machine_status'] )
 
 	# Status list
 	machine_status=''
@@ -250,7 +254,7 @@ def check_workstation_status(doc):
 	status_6 = "Down: Post Inspection" #valid_ms:False
 
 	valid_ms = True
-	if (doc.check_machine_status):#if the checkbox is ticked
+	if (doc_dict['check_machine_status']):#if the checkbox is ticked
 		for row in bom.operations: #Loop through the bom.operation to access each workstation
 			workstation = frappe.get_doc('Workstation',row.workstation) #Get the Workstation we want
 			machine_status_name = frappe.db.get_list('Machine Status', # Find the Machine Status name via filter the workstation name
@@ -320,11 +324,15 @@ def check_employee(doc):
 	valid_emp_emount = 1
 
 	doc = json.loads(doc) #dict form
+	doc_dict = doc
 	doc = frappe.get_doc('Production Plan', doc['name']) #To get the current doc
 	po_items = doc.po_items #access the production plan item child doctype
 
+	#Run this to save the checkbox value to the database so when we run frm.reload_doc() will not affect the state
+	doc.db_set('check_employee',doc_dict['check_employee'] )
+
 	bom,workstation = get_bom_detail(po_items)
-	if (doc.check_employee):#if the checkbox to check employee is ticked
+	if (doc_dict['check_employee']):#if the checkbox to check employee is ticked
 		valid_emp_emount = check_emp_amout(workstation)
 		valid_emp_skill = check_emp_skill(workstation)
 
@@ -351,7 +359,7 @@ def check_emp_skill(workstation):
 	if (len(emp_list) != 0):
 		for workstation in workstation:
 			temp_list= []
-			skill_rq.append((workstation.split("-"))[1]) #Workstation name : Workstation 1-Loading, [1] is to obtain loading
+			skill_rq.append((workstation.split(": "))[1]) #Workstation name : Workstation 1-Loading, [1] is to obtain loading
 			emp_with_skill[skill_rq[idx]] = [] #initialise the dict key with an empty list
 			''' https://www.geeksforgeeks.org/python-ways-to-create-a-dictionary-of-lists/ refer to this to understand why i need 
 			to define a empty list and append it first'''
