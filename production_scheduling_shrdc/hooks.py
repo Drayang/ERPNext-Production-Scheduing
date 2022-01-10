@@ -11,6 +11,13 @@ app_color = "grey"
 app_email = "dchu0011@student.monash.edu"
 app_license = "MIT"
 
+
+test_string = 'value'
+test_list = ['value']
+test_dict = {
+    'key': 'value'
+}
+
 # Includes in <head>
 # ------------------
 
@@ -35,12 +42,13 @@ app_license = "MIT"
 # ----------
 
 # application home page (will override Website Settings)
-# home_page = "login"
+# home_page = "orders"
 
 # website user home page (by Role)
-# role_home_page = {
-#	"Role": "home_page"
-# }
+role_home_page = {
+    "Customer": "orders",
+    "Supplier": "bills"
+}
 
 # Website user home page (by function)
 # get_website_user_home_page = "production_scheduling_shrdc.utils.get_home_page"
@@ -78,7 +86,12 @@ app_license = "MIT"
 # Document Events
 # ---------------
 # Hook on document methods and events
-
+'''
+Can use it to overwrite a doctype.js event [a workaround/trick to overwrite js that we cant do using 
+doctype_js hook] [havent try out no sure can work or not]
+Official doc: https://frappeframework.com/docs/v13/user/en/python-api/hooks#crud-events 
+Forum related: https://discuss.erpnext.com/t/override-all-save-function-in-all-doctype/49800/4
+'''
 # doc_events = {
 # 	"*": {
 # 		"on_update": "method",
@@ -86,6 +99,14 @@ app_license = "MIT"
 # 		"on_trash": "method"
 #	}
 # }
+
+'''
+Extend the js file event, can write like how we write the custom script, it will not overwrite the
+original doctype.js code
+'''
+doctype_js = {
+    'Sales Order':'public/js/sales_order.js'
+}
 
 # Scheduled Tasks
 # ---------------
@@ -115,10 +136,14 @@ app_license = "MIT"
 
 # Overriding Methods
 # ------------------------------
-#
-# override_whitelisted_methods = {
-# 	"frappe.desk.doctype.event.event.get_events": "production_scheduling_shrdc.event.get_events"
-# }
+
+'''
+Able to overwrite the whitelisted method, it is OVERWRITE
+'''
+override_whitelisted_methods = {
+	"erpnext.hr.doctype.holiday_list.holiday_list.get_events": "production_scheduling_shrdc.event.get_events"
+}
+
 #
 # each overriding function accepts a `data` argument;
 # generated from the base implementation of the doctype dashboard,
@@ -126,4 +151,12 @@ app_license = "MIT"
 # override_doctype_dashboards = {
 # 	"Task": "production_scheduling_shrdc.task.get_dashboard_data"
 # }
+
+#customapp.override folder.doctype python file({Doctype}.py).Class we defined(Custom{Doctype})
+override_doctype_class = {
+    'Sales Order': 'production_scheduling_shrdc.overrides.sales_order.CustomSalesOrder'
+}
+
+
+
 

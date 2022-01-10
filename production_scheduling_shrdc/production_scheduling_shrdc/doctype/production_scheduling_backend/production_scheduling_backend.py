@@ -146,6 +146,7 @@ def update_production_plan(doc,current_time):
 				#### To set a scheduled maintenance datetime and try out
 				#last_datetime = datetime.datetime(2022,1,5,12,20,00)
 				
+				downtime = mwo_doc.starting_downtime
 				
 				#temp = datetime.datetime.now()
 				# abc = len(po_items) # can get the lens //
@@ -164,20 +165,7 @@ def update_production_plan(doc,current_time):
 					# abc = d.idx #/// can get
 					print(d.idx)
 					print(last_datetime)
-					# temp = d.planned_start_date
-					# if (d.idx ==affected_idx): #Force the work order to have the planned start datetime we want
-					# 	work_order = frappe.db.get_list('Work Order', 
-					# 		filters ={
-					# 			'sales_order':d.sales_order
-					# 		},
-					# 		fields =['name'],
-					# 	)
-					# 	# To set the field of the work order
-					# 	frappe.db.set_value('Work Order', work_order[0].name, 'planned_start_date', last_datetime)
-					# 	# To refresh the work order doctype and store the value
-					# 	document = frappe.get_doc('Work Order', work_order[0].name)
-					# 	document.save(ignore_permissions=True, ignore_version=True)
-					# 	document.reload()
+					
 					if (d.idx >= affected_idx) and (affected_idx != 0): #0 indicate no affected wo
 						last_datetime,temp_datetime,exceed,start_time,end_time = check_within_operating_hours(d,current_time,last_datetime,pp_date,start_time,end_time,total_op_time,machine)
 						if (~exceed): #only run if we no exceed the day
@@ -231,7 +219,7 @@ def update_work_order(doc):
 
 
 @frappe.whitelist()
-def check_workstation_status(doc):
+def check_workstation_status_js(doc):
 	# To access the current from field type. doc is in dict type, access using doc['fieldname']
 	doc = json.loads(doc) #dict form
 	doc_dict = doc
@@ -239,9 +227,6 @@ def check_workstation_status(doc):
 	po_items = doc.po_items #access the production plan item child doctype
 	bom_no = po_items[0].bom_no	 # assume all link to the same BOM
 	bom = frappe.get_doc('BOM', bom_no)
-
-	#Run this to save the checkbox value to the database so when we run frm.reload_doc() will not affect the state
-	doc.db_set('check_machine_status',doc_dict['check_machine_status'] )
 
 	# Status list
 	machine_status=''
@@ -255,6 +240,8 @@ def check_workstation_status(doc):
 
 	valid_ms = True
 	if (doc_dict['check_machine_status']):#if the checkbox is ticked
+		#Run this to save the checkbox value to the database so when we run frm.reload_doc() will not affect the state
+		
 		for row in bom.operations: #Loop through the bom.operation to access each workstation
 			workstation = frappe.get_doc('Workstation',row.workstation) #Get the Workstation we want
 			machine_status_name = frappe.db.get_list('Machine Status', # Find the Machine Status name via filter the workstation name
@@ -283,6 +270,54 @@ def check_workstation_status(doc):
 	# }
 	# r.message[0] = status,r.message[1]=valid_ms
 	# if only return one variable, can do r.message.status
+	return machine_status,valid_ms,machine
+
+#to be called internally
+def check_workstation_status(doc):
+	# To access the current from field type. doc is in dict type, access using doc['fieldname']
+	doc = json.loads(doc) #dict form
+	doc_dict = doc
+	doc = frappe.get_doc('Production Plan', doc['name']) #To get the current doc
+	po_items = doc.po_items #access the production plan item child doctype
+	bom_no = po_items[0].bom_no	 # assume all link to the same BOM
+	bom = frappe.get_doc('BOM', bom_no)
+	
+	doc.db_set('check_machine_status',doc_dict['check_machine_status'],commit = True )
+	doc.save(ignore_permissions=True, ignore_version=True)
+	doc.reload()
+
+	# Status list
+	machine_status=''
+	machine = ''
+	status_1 = "Up: Idle" #valid_ms:True
+	status_2 = "Up: Running" #valid_ms:True
+	status_3 = "Down: Scheduling Maintenance"  #valid_ms:False
+	status_4 = "Down: Waiting For Maintenance"  #valid_ms:False
+	status_5 = "Down: Under Maintenance" #valid_ms:False
+	status_6 = "Down: Post Inspection" #valid_ms:False
+
+	valid_ms = True
+	if (doc_dict['check_machine_status']):#if the checkbox is ticked
+		#Run this to save the checkbox value to the database so when we run frm.reload_doc() will not affect the state
+		
+		for row in bom.operations: #Loop through the bom.operation to access each workstation
+			workstation = frappe.get_doc('Workstation',row.workstation) #Get the Workstation we want
+			machine_status_name = frappe.db.get_list('Machine Status', # Find the Machine Status name via filter the workstation name
+				filters ={
+					'workstation':workstation.workstation_name,
+				},
+				fields =['name'],
+			)
+			document = frappe.get_doc('Machine Status',machine_status_name[0].name) #Get the machine status doctype we want
+			machine = workstation.workstation_name
+			machine_status = document.machine_status
+
+			#If the machine is under Down, directly return valid_ms = False
+			if (machine_status == status_3 ) or (machine_status == status_4 ) or (machine_status == status_5 ) or (machine_status == status_6 ): 
+				valid_ms = False
+				return machine_status,valid_ms,machine
+	
+	# valid_ms : True= for all Up , False = for all down
 	return machine_status,valid_ms,machine
 
 @frappe.whitelist()
@@ -318,6 +353,33 @@ def check_duplicate_wo(doc):
 	}
 
 @frappe.whitelist()
+def check_employee_js(doc):
+	valid_emp = 0
+	valid_emp_skill = 1
+	valid_emp_emount = 1
+
+	doc = json.loads(doc) #dict form
+	doc_dict = doc
+	doc = frappe.get_doc('Production Plan', doc['name']) #To get the current doc
+	po_items = doc.po_items #access the production plan item child doctype
+
+	#Run this to save the checkbox value to the database so when we run frm.reload_doc() will not affect the state
+	# doc.db_set('check_employee',doc_dict['check_employee'] )
+	# doc.save(ignore_permissions=True)
+	# doc.reload()
+
+	bom,workstation = get_bom_detail(po_items)
+	if (doc_dict['check_employee']):#if the checkbox to check employee is ticked
+		valid_emp_emount = check_emp_amout(workstation)
+		valid_emp_skill = check_emp_skill(workstation)
+
+	if (valid_emp_emount) and (valid_emp_skill):
+		valid_emp = 1	
+
+	return valid_emp
+
+
+#to be called internally
 def check_employee(doc):
 	valid_emp = 0
 	valid_emp_skill = 1
@@ -330,6 +392,8 @@ def check_employee(doc):
 
 	#Run this to save the checkbox value to the database so when we run frm.reload_doc() will not affect the state
 	doc.db_set('check_employee',doc_dict['check_employee'] )
+	doc.save(ignore_permissions=True)
+	doc.reload()
 
 	bom,workstation = get_bom_detail(po_items)
 	if (doc_dict['check_employee']):#if the checkbox to check employee is ticked
@@ -340,6 +404,7 @@ def check_employee(doc):
 		valid_emp = 1	
 
 	return valid_emp
+
 
 def check_emp_skill(workstation):
 
