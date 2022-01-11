@@ -12,11 +12,11 @@ app_email = "dchu0011@student.monash.edu"
 app_license = "MIT"
 
 
-test_string = 'value'
-test_list = ['value']
-test_dict = {
-    'key': 'value'
-}
+# test_string = 'value'
+# test_list = ['value']
+# test_dict = {
+#     'key': 'value'
+# }
 
 # Includes in <head>
 # ------------------
@@ -45,10 +45,10 @@ test_dict = {
 # home_page = "orders"
 
 # website user home page (by Role)
-role_home_page = {
-    "Customer": "orders",
-    "Supplier": "bills"
-}
+# role_home_page = {
+#     "Customer": "orders",
+#     "Supplier": "bills"
+# }
 
 # Website user home page (by function)
 # get_website_user_home_page = "production_scheduling_shrdc.utils.get_home_page"

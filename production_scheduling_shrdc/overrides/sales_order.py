@@ -13,4 +13,3 @@ class CustomSalesOrder(SalesOrder):
     def my_custom_code(self):
         frappe.msgprint(_("Hi how are you mtfker"))
         print('Hi how are yo mtfker')
-
