@@ -184,7 +184,6 @@ def update_production_plan(doc,current_time):
 		'doc':doc,
 	}
 
-
 @frappe.whitelist()
 def update_work_order(doc):
 	# To access the current from field type. doc is in dict type, access using doc['fieldname']

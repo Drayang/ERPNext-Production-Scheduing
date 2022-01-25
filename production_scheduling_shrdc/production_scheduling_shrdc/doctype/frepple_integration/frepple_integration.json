@@ -1,0 +1,81 @@
+{
+ "autoname": "field:name1",
+ "creation": "2022-01-13 14:50:16.395666",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "name1",
+  "post",
+  "get",
+  "configuration_section",
+  "sales_order",
+  "delivery_date",
+  "frepple_integrations"
+ ],
+ "fields": [
+  {
+   "fieldname": "name1",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Name",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "configuration_section",
+   "fieldtype": "Section Break",
+   "label": "Configuration"
+  },
+  {
+   "fieldname": "sales_order",
+   "fieldtype": "Data",
+   "label": "sales order"
+  },
+  {
+   "fieldname": "delivery_date",
+   "fieldtype": "Data",
+   "label": "delivery date"
+  },
+  {
+   "fieldname": "post",
+   "fieldtype": "Button",
+   "label": "post"
+  },
+  {
+   "fieldname": "get",
+   "fieldtype": "Button",
+   "label": "get"
+  },
+  {
+   "default": "0",
+   "fieldname": "frepple_integrations",
+   "fieldtype": "Check",
+   "label": "Frepple Integrations"
+  }
+ ],
+ "modified": "2022-01-24 14:24:18.662711",
+ "modified_by": "Administrator",
+ "module": "Production Scheduling Shrdc",
+ "name": "Frepple Integration",
+ "name_case": "Title Case",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

@@ -105,7 +105,15 @@ Extend the js file event, can write like how we write the custom script, it will
 original doctype.js code
 '''
 doctype_js = {
-    'Sales Order':'public/js/sales_order.js'
+    'Item':'public/js/item.js',
+    'Customer':'public/js/customer.js',
+    'Supplier':'public/js/supplier.js',
+    'Employee':'public/js/employee.js',
+    'BOM':'public/js/bom.js',
+    'Workstation':'public/js/workstation.js',
+    'Sales Order':'public/js/sales_order.js',
+    'Skill':'public/js/skill.js',
+    'Employee Skill Map':'public/js/employee_skill_map.js',
 }
 
 # Scheduled Tasks

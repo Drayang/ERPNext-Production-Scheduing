@@ -13,11 +13,29 @@ def get_data():
                     # "dependencies": ["Item"],
                 },
                 # {
-                #     "type": "page",
-                #     "name": "barcode-scanner",
-                #     "label": "Barcode Scanner",
-                #     "onboard": 1,
+                #     "type": "doctype",
+                #     "name": "Frepple Integration",
+                #     "label": "Frepple Integration",
+                #     "onboard": 2,
                 # },
+            ]
+        },
+        {
+            "label": _("Frepple Integration"),
+            "items": [
+                {
+                    "type": "doctype",
+                    "name": "Frepple Integration",
+                    "label": "Frepple Integration",
+                    "onboard": 1,
+                    # "dependencies": ["Item"],
+                },
+                                {
+                    "type": "doctype",
+                    "name": "Frepple Settings",
+                    "label": "Frepple Settings",
+                    "onboard": 2,
+                },
             ]
         }
     ]
