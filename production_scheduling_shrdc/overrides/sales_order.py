@@ -11,5 +11,5 @@ class CustomSalesOrder(SalesOrder):
         self.my_custom_code()
 
     def my_custom_code(self):
-        frappe.msgprint(_("Hi how are you mtfker"))
-        print('Hi how are yo mtfker')
+        frappe.msgprint(_("Hi how are you "))
+        print('Hi how are yo ')

@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 # import frappe
 from frappe.model.document import Document
 
-class FreppleSettings(Document):
+class FreppleSetting(Document):
 	def get_params_and_url(self):
 		params = {
 			"USER": self.username,

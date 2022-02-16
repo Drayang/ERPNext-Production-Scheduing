@@ -8,6 +8,7 @@ from frappe.model.document import Document
 import frappe 
 import json
 from frappe.integrations.utils import make_get_request, make_post_request, create_request_log
+from frappe.utils import get_request_session
 
 import requests
 from requests.structures import CaseInsensitiveDict
@@ -28,9 +29,9 @@ class FreppleIntegration(Document):
 
 		''' With filtering'''
 		filter=None
-		filter="?status=open"
+		# filter="?status=open"
 		
-		url,headers = get_frepple_params(api=None,filter=filter)
+		url,headers = get_frepple_params(api=api,filter=filter)
 		# filter = None
 		
 		ro = make_get_request(url,headers=headers) #ro is a list type, so need [] to access
@@ -45,6 +46,69 @@ class FreppleIntegration(Document):
 
 		return ro
 
+	@frappe.whitelist()
+	def test(self):
+		# doc = frappe.get_doc('Frepple Integration', doc['name']) #To get the current item	
+		print(self.password)
+
+		print(type(self.password))
+		# print(type(doc.password))	
+		# return doc.password
+
+
+@frappe.whitelist()
+def testing(doc):
+	doc = json.loads(doc)
+	print(doc)
+	doc = frappe.get_doc('Frepple Integration', doc['name']) #To get the current item	
+	print(type(doc.password))
+
+	return doc.password
+
+
+def make_put_request(url, auth=None, headers=None, data=None):
+	if not auth:
+		auth = ''
+	if not data:
+		data = {}
+	if not headers:
+		headers = {}
+
+	try:
+		s = get_request_session()
+		frappe.flags.integration_request = s.put(url, data=data, auth=auth, headers=headers)
+		frappe.flags.integration_request.raise_for_status()
+
+		if frappe.flags.integration_request.headers.get("content-type") == "text/plain; charset=utf-8":
+			return parse_qs(frappe.flags.integration_request.text)
+
+		return frappe.flags.integration_request.json()
+	except Exception as exc:
+		frappe.log_error()
+		raise exc
+
+# @frappe.whitelist()
+# def put_demand():
+# 	if(frappe.get_doc("Frepple Setting").frepple_integration):
+		
+# 		# doc = frappe.get_doc('Sales Order', doc['name']) #To get the current doc
+# 		data = json.dumps({
+# 			"status": "closed", #default
+# 		})
+# 		api = "demand/SAL-ORD-2022-00033" #equivalent sales order
+# 		url,headers = get_frepple_params(api=api,filter=None)
+# 		output = make_put_request(url,headers=headers, data=data)
+# 		frappe.msgprint(
+# 			msg='Data have been updated.',
+# 			title='Note',
+# 		)
+
+# 		return output
+
+
+
+
+
 
 @frappe.whitelist()
 def get_frepple_params(api=None,filter = None):
@@ -53,7 +117,7 @@ def get_frepple_params(api=None,filter = None):
 	if not filter:
 		filter = ""
 
-	frepple_settings = frappe.get_doc("Frepple Settings")
+	frepple_settings = frappe.get_doc("Frepple Setting")
 	temp_url = frepple_settings.url.split("//")
 	url1 = "http://"
 	url2 = frepple_settings.username + ":" + frepple_settings.password + "@"
@@ -128,7 +192,7 @@ def get_manufacturingorder():
 
 @frappe.whitelist()
 def post_item(doc):
-	if(frappe.get_doc("Frepple Settings").frepple_integration):
+	if(frappe.get_doc("Frepple Setting").frepple_integration):
 		doc = json.loads(doc) #dict form
 		doc = frappe.get_doc('Item', doc['name']) #To get the current item	
 		
@@ -163,7 +227,7 @@ def post_item(doc):
 
 @frappe.whitelist()
 def post_location():
-	if(frappe.get_doc("Frepple Settings").frepple_integration):
+	if(frappe.get_doc("Frepple Setting").frepple_integration):
 		''' Define the Frepple table you want to match'''
 		api = "location" 
 		
@@ -204,7 +268,7 @@ def post_location():
 
 @frappe.whitelist()
 def post_employee(doc):
-	if(frappe.get_doc("Frepple Settings").frepple_integration):
+	if(frappe.get_doc("Frepple Setting").frepple_integration):
 		doc = json.loads(doc) #dict form
 		doc = frappe.get_doc('Employee', doc['name']) #To get the current item	
 		
@@ -238,7 +302,7 @@ def post_employee(doc):
 
 @frappe.whitelist()
 def post_workstation(doc):
-	if(frappe.get_doc("Frepple Settings").frepple_integration):
+	if(frappe.get_doc("Frepple Setting").frepple_integration):
 		
 		''' Define the Frepple table you want to match'''
 		api = "resource" #equivalent to employee doctype
@@ -281,7 +345,7 @@ def post_workstation(doc):
 
 @frappe.whitelist()
 def post_customer(doc):
-	if(frappe.get_doc("Frepple Settings").frepple_integration):
+	if(frappe.get_doc("Frepple Setting").frepple_integration):
 		doc = json.loads(doc) #dict form
 		doc = frappe.get_doc('Customer', doc['name']) #To get the current sales order	
 		
@@ -313,7 +377,7 @@ def post_customer(doc):
 
 @frappe.whitelist()
 def post_supplier(doc):
-	if(frappe.get_doc("Frepple Settings").frepple_integration):
+	if(frappe.get_doc("Frepple Setting").frepple_integration):
 		doc = json.loads(doc) #dict form
 		doc = frappe.get_doc('Supplier', doc['name']) #To get the current sales order	
 		
@@ -339,7 +403,7 @@ def post_supplier(doc):
 
 @frappe.whitelist()
 def post_demand(doc):
-	if(frappe.get_doc("Frepple Settings").frepple_integration):
+	if(frappe.get_doc("Frepple Setting").frepple_integration):
 		#parse: mean convert string to object/dictionary
 
 		'''https://discuss.erpnext.com/t/how-to-call-external-web-service/40448/14 check this to
@@ -397,7 +461,7 @@ def post_demand(doc):
 
 @frappe.whitelist()
 def post_skill(doc):
-	if(frappe.get_doc("Frepple Settings").frepple_integration):
+	if(frappe.get_doc("Frepple Setting").frepple_integration):
 		doc = json.loads(doc) #dict form
 		doc = frappe.get_doc('Skill', doc['name']) #To get the current sales order	
 		
@@ -423,7 +487,7 @@ def post_skill(doc):
 
 @frappe.whitelist()
 def post_resourceskill(doc):
-	if(frappe.get_doc("Frepple Settings").frepple_integration):
+	if(frappe.get_doc("Frepple Setting").frepple_integration):
 		
 		''' Define the Frepple table you want to match'''
 		api = "resourceskill" #equivalent to employee doctype
@@ -456,10 +520,10 @@ def post_resourceskill(doc):
 
 @frappe.whitelist()
 def run_plan():
-	if(frappe.get_doc("Frepple Settings").frepple_integration):
+	if(frappe.get_doc("Frepple Setting").frepple_integration):
 		
 		filter = "/execute/api/runplan/?constraint=15&plantype=1&env=fcst,invplan,balancing,supply"
-		frepple_settings = frappe.get_doc("Frepple Settings")
+		frepple_settings = frappe.get_doc("Frepple Setting")
 		temp_url = frepple_settings.url.split("//")
 		url = "http://"+ frepple_settings.username + ":" + frepple_settings.password + "@" + temp_url[1] + filter
 		print(url + "-----------------------------------------------------------------------")
@@ -482,24 +546,24 @@ def run_plan():
 
 # @frappe.whitelist()
 # def get_demand(self):
-	# api = 'demand'
+# 	api = 'demand'
 
-	# # url,headers = get_frepple_params(api=api,filter=None)
+# 	# url,headers = get_frepple_params(api=api,filter=None)
 
-	# ''' With filtering'''
-	# filter=None
-	# filter="?status=open"
+# 	''' With filtering'''
+# 	filter=None
+# 	filter="?status=open"
 	
-	# url,headers = get_frepple_params(api=None,filter=filter)
-	# # filter = None
+# 	url,headers = get_frepple_params(api=None,filter=filter)
+# 	# filter = None
 	
-	# ro = make_get_request(url,headers=headers)
-	# # dt = datetime.fromisoformat(startdate)
-	# name = ro[0]['name']
-	# print(type(ro))
-	# dd = ro[0]['due']
-	# #convert iso8601 time type to datetime.datetime type
-	# dt = datetime.fromisoformat(dd)
-	# self.delivery_date = dt
+# 	ro = make_get_request(url,headers=headers)
+# 	# dt = datetime.fromisoformat(startdate)
+# 	name = ro[0]['name']
+# 	print(type(ro))
+# 	dd = ro[0]['due']
+# 	#convert iso8601 time type to datetime.datetime type
+# 	dt = datetime.fromisoformat(dd)
+# 	self.delivery_date = dt
 
-	# return ro
+# 	return ro

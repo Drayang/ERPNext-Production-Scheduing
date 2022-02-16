@@ -9,9 +9,7 @@
   "post",
   "get",
   "configuration_section",
-  "sales_order",
-  "delivery_date",
-  "frepple_integrations"
+  "password"
  ],
  "fields": [
   {
@@ -28,16 +26,6 @@
    "label": "Configuration"
   },
   {
-   "fieldname": "sales_order",
-   "fieldtype": "Data",
-   "label": "sales order"
-  },
-  {
-   "fieldname": "delivery_date",
-   "fieldtype": "Data",
-   "label": "delivery date"
-  },
-  {
    "fieldname": "post",
    "fieldtype": "Button",
    "label": "post"
@@ -48,13 +36,12 @@
    "label": "get"
   },
   {
-   "default": "0",
-   "fieldname": "frepple_integrations",
-   "fieldtype": "Check",
-   "label": "Frepple Integrations"
+   "fieldname": "password",
+   "fieldtype": "Password",
+   "label": "password"
   }
  ],
- "modified": "2022-01-24 14:24:18.662711",
+ "modified": "2022-02-08 14:55:25.363288",
  "modified_by": "Administrator",
  "module": "Production Scheduling Shrdc",
  "name": "Frepple Integration",

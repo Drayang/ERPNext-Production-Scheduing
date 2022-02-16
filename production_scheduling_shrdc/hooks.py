@@ -92,6 +92,7 @@ doctype_js hook] [havent try out no sure can work or not]
 Official doc: https://frappeframework.com/docs/v13/user/en/python-api/hooks#crud-events 
 Forum related: https://discuss.erpnext.com/t/override-all-save-function-in-all-doctype/49800/4
 '''
+
 # doc_events = {
 # 	"*": {
 # 		"on_update": "method",
@@ -105,15 +106,15 @@ Extend the js file event, can write like how we write the custom script, it will
 original doctype.js code
 '''
 doctype_js = {
-    'Item':'public/js/item.js',
-    'Customer':'public/js/customer.js',
-    'Supplier':'public/js/supplier.js',
-    'Employee':'public/js/employee.js',
-    'BOM':'public/js/bom.js',
-    'Workstation':'public/js/workstation.js',
-    'Sales Order':'public/js/sales_order.js',
-    'Skill':'public/js/skill.js',
-    'Employee Skill Map':'public/js/employee_skill_map.js',
+    # 'Item':'public/js/item.js',
+    # 'Customer':'public/js/customer.js',
+    # 'Supplier':'public/js/supplier.js',
+    # 'Employee':'public/js/employee.js',
+    # 'BOM':'public/js/bom.js',
+    # 'Workstation':'public/js/workstation.js',
+    # 'Sales Order':'public/js/sales_order.js',
+    # 'Skill':'public/js/skill.js',
+    # 'Employee Skill Map':'public/js/employee_skill_map.js',
 }
 
 # Scheduled Tasks

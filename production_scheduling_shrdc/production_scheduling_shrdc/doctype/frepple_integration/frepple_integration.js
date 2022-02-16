@@ -28,10 +28,16 @@ frappe.ui.form.on('Frepple Integration', {
 		frm.call({
 			// method:"get_manufacturingorder",
 			// method:"post_location",
-			method:"run_plan",
+			method:"test",
+			// method:"post_demand",
+			doc: frm.doc,
+			// method:"run_plan",
 			callback: function(r) {
 				console.log(r.message)
 			}
 		});
 	}
+
+	
+
 })
